@@ -97,10 +97,10 @@ def predict():
         # Translate predicted disease to the input language
         if lang == 'ar':
             translated_disease = translate_to_arabic(predicted_disease)
+            response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease}
         else:
-            translated_disease = predicted_disease
-
-        response = {'predicted': f"Maybe you suffer from {translated_disease}"}
+            response = {'predicted': f"Maybe you suffer from {predicted_disease}"}
+        
         return jsonify(response), 200
     else:
         return jsonify({'error': 'Please enter valid symptoms'}), 400
