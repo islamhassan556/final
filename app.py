@@ -83,10 +83,13 @@ def predict():
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
+    
     if score > 0.30:
-        return jsonify({'predicted': "Maybe you suffer from  " + predicted_disease}), 200  # disease
+        translated_disease_arabic = translate_to_arabic(predicted_disease)
+        response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease_arabic}
+        return jsonify(response), 200
     else:
-        return jsonify({'error': 'Please enter valid symptoms'}), 400  # error message
+        return jsonify({'error': 'الرجاء إدخال أعراض صحيحة'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
