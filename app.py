@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, app
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import string
@@ -7,7 +7,7 @@ import joblib
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
-from nltk.corpus import wordnet
+from googletrans import Translator
 
 # Initialize
 app = Flask(__name__)
@@ -16,6 +16,17 @@ CORS(app)
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+
+# Translation functions
+def translate_to_arabic(text):
+    translator = Translator()
+    translation = translator.translate(text, src='en', dest='ar')
+    return translation.text
+
+def translate_to_english(text):
+    translator = Translator()
+    translation = translator.translate(text, src='ar', dest='en')
+    return translation.text
 
 # NLP
 def lowercase_text(text):
@@ -60,21 +71,22 @@ model = joblib.load('best_svm_classifier.joblib')
 def predict():
     # Get input data from request
     text = request.json.get('text')
+    translated_text_arabic = translate_to_arabic(text)
 
     # NLP
-    text = preprocess_text(text)
+    preprocessed_text = preprocess_text(translated_text_arabic)
 
     # TF-IDF vectorizer
-    text_vectorized = tfidf_vectorizer.transform([text]).toarray()
+    text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
 
     # Prediction
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
     if score > 0.30:
-        return jsonify({'predicted':"Maybe you suffer from  " + predicted_disease}), 200 # disease
+        return jsonify({'predicted': "Maybe you suffer from  " + predicted_disease}), 200  # disease
     else:
-        return jsonify({'error': 'Please enter valid symptoms'}), 400 # error message
+        return jsonify({'error': 'Please enter valid symptoms'}), 400  # error message
 
 if __name__ == '__main__':
     app.run(debug=True)
