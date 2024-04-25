@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, app
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import numpy as np
 import string
@@ -7,6 +7,7 @@ import joblib
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+import requests
 
 # Initialize
 app = Flask(__name__)
@@ -15,6 +16,10 @@ CORS(app)
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+
+# Translation API endpoint and API key
+TRANSLATION_API_URL = 'https://translation.googleapis.com/language/translate/v2'
+API_KEY = 'YOUR_API_KEY'
 
 # NLP
 def lowercase_text(text):
@@ -49,6 +54,20 @@ def preprocess_text(text):
     preprocessed_text = ' '.join(tokens)
     return preprocessed_text
 
+# Translation function
+def translate_text(text, source_lang, target_lang):
+    headers = {'Content-Type': 'application/json'}
+    params = {
+        'key': API_KEY,
+        'q': text,
+        'source': source_lang,
+        'target': target_lang,
+        'format': 'text'
+    }
+    response = requests.post(TRANSLATION_API_URL, headers=headers, params=params)
+    translation = response.json()['data']['translations'][0]['translatedText']
+    return translation
+
 # Load the TF-IDF vectorizer
 tfidf_vectorizer = joblib.load('tfidf_vectorizer.joblib')
 
@@ -58,22 +77,28 @@ model = joblib.load('best_svm_classifier.joblib')
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input data from request
-    text = request.json.get('text')
+    text_arabic = request.json.get('text')
+
+    # Translate input from Arabic to English
+    text_english = translate_text(text_arabic, 'ar', 'en')
 
     # NLP
-    text = preprocess_text(text)
+    text_english = preprocess_text(text_english)
 
     # TF-IDF vectorizer
-    text_vectorized = tfidf_vectorizer.transform([text]).toarray()
+    text_vectorized = tfidf_vectorizer.transform([text_english]).toarray()
 
     # Prediction
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
     if score > 0.60:
-        return jsonify({'predicted': predicted_disease}), 200 # disease
+        # Translate predicted disease from English to Arabic
+        predicted_disease_arabic = translate_text(predicted_disease, 'en', 'ar')
+        return jsonify({'predicted': predicted_disease_arabic}), 200  # disease
     else:
-        return jsonify({'error': 'Please enter valid symptoms'}), 400 # error message
+        error_message = translate_text('Please enter valid symptoms', 'en', 'ar')
+        return jsonify({'error': error_message}), 400  # error message
 
 if __name__ == '__main__':
     app.run(debug=True)
