@@ -70,11 +70,20 @@ model = joblib.load('best_svm_classifier.joblib')
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input data from request
-    text_arabic = request.json.get('text')
-    translated_text_english = translate_to_english(text_arabic)
+    text = request.json.get('text')
+
+    # Detect input language
+    translator = Translator()
+    lang = translator.detect(text).lang
+
+    # Translate input to English if it's in Arabic
+    if lang == 'ar':
+        translated_text = translate_to_english(text)
+    else:
+        translated_text = text
 
     # NLP
-    preprocessed_text = preprocess_text(translated_text_english)
+    preprocessed_text = preprocess_text(translated_text)
 
     # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
@@ -83,13 +92,18 @@ def predict():
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
-    
+
     if score > 0.30:
-        translated_disease_arabic = translate_to_arabic(predicted_disease)
-        response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease_arabic}
+        # Translate predicted disease to the input language
+        if lang == 'ar':
+            translated_disease = translate_to_arabic(predicted_disease)
+        else:
+            translated_disease = predicted_disease
+
+        response = {'predicted': f"Maybe you suffer from {translated_disease}"}
         return jsonify(response), 200
     else:
-        return jsonify({'error': 'الرجاء إدخال أعراض صحيحة'}), 400
+        return jsonify({'error': 'Please enter valid symptoms'}), 400
 
 if __name__ == '__main__':
     app.run(debug=True)
