@@ -70,11 +70,11 @@ model = joblib.load('best_svm_classifier.joblib')
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input data from request
-    text = request.json.get('text')
-    translated_text_arabic = translate_to_arabic(text)
+    text_arabic = request.json.get('text')
+    translated_text_english = translate_to_english(text_arabic)
 
     # NLP
-    preprocessed_text = preprocess_text(translated_text_arabic)
+    preprocessed_text = preprocess_text(translated_text_english)
 
     # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
