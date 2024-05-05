@@ -102,12 +102,12 @@ def predict():
             response = {'predicted': f"Maybe you suffer from {predicted_disease}"}
     
         return jsonify(response), 200
-   else:
-       if lang == 'ar':
-           response = {'error': 'من فضلك ادخل أعراض صحيحة'}
-       else:
-           response = {'error': 'Please enter valid symptoms'}
+    else:
+        if lang == 'ar':
+            response = {'error': 'من فضلك ادخل أعراض صحيحة'}
+        else:
+            response = {'error': 'Please enter valid symptoms'}
     
-       return jsonify(response), 400
+        return jsonify(response), 400
 if __name__ == '__main__':
     app.run(debug=True)
