@@ -104,7 +104,7 @@ def predict():
         return jsonify(response), 200
     else:
         if lang == 'ar':
-            response = {'error': 'من فضلك ادخل أعراض صحيحة'}
+            response = {'error': 'الرجاء إدخال أعراض صحيحة'}
         else:
             response = {'error': 'Please enter valid symptoms'}
     
