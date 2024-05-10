@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import numpy as np
 import string
 import nltk
 import joblib
@@ -9,7 +10,7 @@ from nltk.stem import WordNetLemmatizer
 from googletrans import Translator
 
 # Initialize
-app = Flask(__name__)
+app = Flask(_name_)
 CORS(app)
 
 nltk.download('punkt')
@@ -102,20 +103,11 @@ def predict():
     
         return jsonify(response), 200
     else:
-        # Check if the user's message is a greeting
-        greetings = ['hi', 'hello', 'hey']
-        if text.lower() in greetings:
-            if lang == 'ar':
-                response = {'response': 'مرحبًا! كيف يمكنني مساعدتك اليوم؟'}
-            else:
-                response = {'response': 'Hello! How can I assist you today?'}
+        if lang == 'ar':
+            response = {'error': 'الرجاء إدخال أعراض صحيحة'}
         else:
-            if lang == 'ar':
-                response = {'error': 'الرجاء إدخال أعراض صحيحة'}
-            else:
-                response = {'error': 'Please enter valid symptoms'}
+            response = {'error': 'Please enter valid symptoms'}
     
         return jsonify(response), 400
-
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
