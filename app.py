@@ -10,7 +10,7 @@ from nltk.stem import WordNetLemmatizer
 from googletrans import Translator
 
 # Initialize
-app = Flask(_name_)
+app = Flask(__name__)
 CORS(app)
 
 nltk.download('punkt')
@@ -109,5 +109,5 @@ def predict():
             response = {'error': 'Please enter valid symptoms'}
     
         return jsonify(response), 400
-if _name_ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
