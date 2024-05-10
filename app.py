@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import numpy as np
 import string
 import nltk
 import joblib
@@ -103,11 +102,20 @@ def predict():
     
         return jsonify(response), 200
     else:
-        if lang == 'ar':
-            response = {'error': 'الرجاء إدخال أعراض صحيحة'}
+        # Check if the user's message is a greeting
+        greetings = ['hi', 'hello', 'hey']
+        if text.lower() in greetings:
+            if lang == 'ar':
+                response = {'response': 'مرحبًا! كيف يمكنني مساعدتك اليوم؟'}
+            else:
+                response = {'response': 'Hello! How can I assist you today?'}
         else:
-            response = {'error': 'Please enter valid symptoms'}
+            if lang == 'ar':
+                response = {'error': 'الرجاء إدخال أعراض صحيحة'}
+            else:
+                response = {'error': 'Please enter valid symptoms'}
     
         return jsonify(response), 400
+
 if __name__ == '__main__':
     app.run(debug=True)
