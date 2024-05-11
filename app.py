@@ -77,7 +77,7 @@ def detect_greeting(user_input):
 
 # Greeting response
 def respond_to_greeting():
-    return "Hello! I'm your healthcare assistant. How can I assist you today?"
+    return "Hello! I'm your healthcare assistant! , Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
 
 @app.route('/predict', methods=['POST'])
 def predict():
