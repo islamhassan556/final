@@ -77,7 +77,7 @@ def detect_greeting(user_input):
 
 # Greeting response
 def respond_to_greeting():
-    return "Hello! I'm your healthcare assistant! , Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
+    return "Hello! I'm your healthcare assistant. How can I assist you today?"
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -90,7 +90,11 @@ def predict():
 
     # Check for greetings
     if detect_greeting(text):
-        return jsonify({'response': respond_to_greeting()}), 200
+        if lang == 'ar':
+            response = {'response': translate_to_arabic(respond_to_greeting())}
+        else:
+            response = {'response': respond_to_greeting()}
+        return jsonify(response), 200
 
     # Translate input to English if it's in Arabic
     if lang == 'ar':
