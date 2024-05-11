@@ -67,6 +67,18 @@ tfidf_vectorizer = joblib.load('tfidf_vectorizer.joblib')
 # Load the SVM model
 model = joblib.load('best_svm_classifier.joblib')
 
+# Greeting detection function
+def detect_greeting(user_input):
+    greetings = ["hi", "hello", "hey", "howdy", "greetings", "what's up", "good morning", "good afternoon", "good evening", "introduce yourself"]
+    for word in user_input.split():
+        if word.lower() in greetings:
+            return True
+    return False
+
+# Greeting response
+def respond_to_greeting():
+    return "Hello! I'm your healthcare assistant. How can I assist you today?"
+
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input data from request
@@ -75,6 +87,10 @@ def predict():
     # Detect input language
     translator = Translator()
     lang = translator.detect(text).lang
+
+    # Check for greetings
+    if detect_greeting(text):
+        return jsonify({'response': respond_to_greeting()}), 200
 
     # Translate input to English if it's in Arabic
     if lang == 'ar':
@@ -109,5 +125,6 @@ def predict():
             response = {'error': 'Please enter valid symptoms'}
     
         return jsonify(response), 400
+
 if __name__ == '__main__':
     app.run(debug=True)
