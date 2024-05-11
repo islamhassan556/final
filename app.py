@@ -69,15 +69,19 @@ model = joblib.load('best_svm_classifier.joblib')
 
 # Greeting detection function
 def detect_greeting(user_input):
-    greetings = ["hi", "hello", "hey", "howdy", "greetings", "what's up", "good morning", "good afternoon", "good evening", "introduce yourself"]
+    english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "what's up", "good morning", "good afternoon", "good evening", "introduce yourself"]
+    arabic_greetings = ["مرحبا", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "صباح الخير"]
     for word in user_input.split():
-        if word.lower() in greetings:
+        if word.lower() in english_greetings or word in arabic_greetings:
             return True
     return False
 
 # Greeting response
-def respond_to_greeting():
-    return "Hello! I'm your healthcare assistant. How can I assist you today?"
+def respond_to_greeting(lang):
+    if lang == 'ar':
+        return "مرحبًا! أنا مساعدك الصحي. كيف يمكنني مساعدتك اليوم؟"
+    else:
+        return "Hello! I'm your healthcare assistant. How can I assist you today?"
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -90,11 +94,7 @@ def predict():
 
     # Check for greetings
     if detect_greeting(text):
-        if lang == 'ar':
-            response = {'response': translate_to_arabic(respond_to_greeting())}
-        else:
-            response = {'response': respond_to_greeting()}
-        return jsonify(response), 200
+        return jsonify({'response': respond_to_greeting(lang)}), 200
 
     # Translate input to English if it's in Arabic
     if lang == 'ar':
