@@ -73,8 +73,8 @@ def detect_greeting(user_input):
     arabic_greetings = ["مرحبا", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "صباح الخير"]
     for word in user_input.split():
         if word.lower() in english_greetings or word in arabic_greetings:
-            return word.lower()  # Return the detected greeting word
-    return None  # Return None if no greeting is detected
+            return True
+    return False
 
 # Greeting response
 def respond_to_greeting(lang):
@@ -92,9 +92,8 @@ def predict():
     translator = Translator()
     lang = translator.detect(text).lang
 
-    # Detect greeting
-    greeting = detect_greeting(text)
-    if greeting:
+    # Check for greetings
+    if detect_greeting(text):
         return jsonify({'response': respond_to_greeting(lang)}), 200
 
     # Translate input to English if it's in Arabic
@@ -117,7 +116,7 @@ def predict():
     if score > 0.30:
         # Translate predicted disease to the input language
         if lang == 'ar':
-            translated_disease = translate_toarabic(predicted_disease)
+            translated_disease = translate_to_arabic(predicted_disease)
             response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease}
         else:
             response = {'predicted': f"Maybe you suffer from {predicted_disease}"}
