@@ -79,9 +79,9 @@ def detect_greeting(user_input):
 # Greeting response
 def respond_to_greeting(lang):
     if lang == 'ar':
-        response = "مرحبًا! أنا مساعد الرعاية الصحية الخاص بك! يرجى إدخال الأعراض الخاصة بك، وسأبذل قصارى جهدي لإخبارك عن أمراضك والاحتياطات الموصى بها لمساعدتك على حماية نفسك"
+        return  "مرحبًا! أنا مساعد الرعاية الصحية الخاص بك! يرجى إدخال الأعراض الخاصة بك، وسأبذل قصارى جهدي لإخبارك عن أمراضك والاحتياطات الموصى بها لمساعدتك على حماية نفسك"
     else:
-        response = "Hello! I'm your healthcare assistant!, Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
+        return  "Hello! I'm your healthcare assistant!, Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
 
 @app.route('/predict', methods=['POST'])
 def predict():
