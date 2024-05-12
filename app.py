@@ -94,7 +94,7 @@ def predict():
 
     # Check for greetings
     if detect_greeting(text):
-        return jsonify({'response': respond_to_greeting(lang)}), 200
+        return jsonify({'predicted': respond_to_greeting(lang)}), 200
 
     # Translate input to English if it's in Arabic
     if lang == 'ar':
