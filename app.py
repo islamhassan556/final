@@ -70,7 +70,7 @@ model = joblib.load('best_svm_classifier.joblib')
 # Greeting detection function
 # Greeting detection function
 def detect_greeting(user_input):
-    english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "introduce yourself", "what is your job", "who are you", "tell me what you offer", "what are your services"]
+    english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "introduce yourself", "what is your job", "who are you", "tell me what you offer", "what are your services", "what's up"]
     arabic_greetings = ["مرحبا","مرحبًا","أهلا","أهلًا","مساء الخير","صباح الخير","عرف نفسك","ما هي وظيفتك","من انت؟","من انت","عرفني بنفسك","اخبرني ماذا تقدم","ما هي خدماتك"]
     for greeting in english_greetings:
         if greeting.lower() in user_input.lower():
