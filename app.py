@@ -77,7 +77,7 @@ def detect_greeting(user_input):
     greetings = english_greetings + arabic_greetings
     words = set(user_input.lower().split())
     for greeting in greetings:
-        if any(word in words for word in greeting.lower().split()):
+        if any(word in greeting.lower().split() for word in words):
             return True
     return False
 
@@ -99,16 +99,16 @@ def predict():
     lang = translator.detect(text).lang
     logging.debug(f"Detected language: {lang}")
 
-    # Check for greetings
-    if detect_greeting(text):
-        return jsonify({'predicted': respond_to_greeting(lang)}), 200
-
     # Translate input to English if it's in Arabic
     if lang == 'ar':
         translated_text = translate_to_english(text)
+        logging.debug(f"Translated text to English: {translated_text}")
     else:
         translated_text = text
-    logging.debug(f"Translated text: {translated_text}")
+
+    # Check for greetings
+    if detect_greeting(translated_text):
+        return jsonify({'predicted': respond_to_greeting(lang)}), 200
 
     # NLP
     preprocessed_text = preprocess_text(translated_text)
