@@ -115,6 +115,9 @@ def predict():
     preprocessed_text = preprocess_text(translated_text)
     logging.debug(f"Preprocessed text: {preprocessed_text}")
 
+    # Print preprocessed text for debugging
+    print("Preprocessed Text:", preprocessed_text)
+
     # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
     logging.debug(f"Text vectorized: {text_vectorized}")
