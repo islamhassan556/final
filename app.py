@@ -70,8 +70,40 @@ model = joblib.load('best_svm_classifier.joblib')
 # Greeting detection function
 # Greeting detection function
 def detect_greeting(user_input):
-    english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "introduce yourself", "what is your job", "who are you", "tell me what you offer", "what are your services", "what's up"]
-    arabic_greetings = ["مرحبا","مرحبًا","أهلا","أهلًا","مساء الخير","صباح الخير","عرف نفسك","ما هي وظيفتك","من انت؟","من انت","عرفني بنفسك","اخبرني ماذا تقدم","ما هي خدماتك"]
+    english_greetings = [
+        "hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon",
+        "good evening", "introduce yourself", "what is your job", "who are you",
+        "tell me what you offer", "what are your services", "what's up", "hiya",
+        "how are you", "how is it going", "what's new", "what's happening", "salutations",
+        "good day", "yo", "how's it going", "how's everything", "how are things", 
+        "howdy-do", "how have you been", "long time no see", "nice to see you", 
+        "good to see you", "pleased to meet you", "how's your day", "how's your day going",
+        "how's life", "what's going on", "how's it hanging", "how's tricks", 
+        "what's the good word", "what's the news", "top of the morning to you", 
+        "how do you do", "look who it is", "what's crackin'", "what's cooking", 
+        "what's shaking", "what's sizzling", "what's happening", "how's everything going",
+        "what's the latest", "what's new", "what's the word", "yo yo", "hey there", 
+        "hi there", "what's going down", "hey, how's it going", "hello there", 
+        "how are you doing", "hey, what’s new", "hey, how are things", "how have things been", 
+        "how’s it going with you", "how’s everything been", "how’s life treating you", 
+        "how’s your day been", "hey, how’s everything", "hello, what’s up", "hi, how’s it going",
+        "g'day", "hey, how’ve you been"
+    ]
+    
+    arabic_greetings = [
+        "مرحبا", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "صباح الخير", "عرف نفسك",
+        "ما هي وظيفتك", "من انت؟", "من انت", "عرفني بنفسك", "اخبرني ماذا تقدم",
+        "ما هي خدماتك", "كيف حالك", "ما الأخبار", "مرحبتين", "السلام عليكم", "وعليكم السلام",
+        "تحية", "مساء النور", "صباح النور", "كيف حالك اليوم", "كيف حالك الآن", "أهلاً وسهلاً",
+        "مرحبا بك", "يسعد صباحك", "يسعد مساك", "شخبارك", "شلونك", "كيفك", "كيف أصبحت",
+        "كيف أمسيت", "كيف الحال", "كيف الأمور", "كيف الدنيا", "شو الأخبار", "كيف الوضع",
+        "إزيك", "إزي الحال", "كيف الحالك", "كيف حالك اليوم", "إزيك يا حلو", "شو مسوي",
+        "شو عامل", "شو أخبارك", "كيف الأمور معك", "شو الوضع", "شو الأخبار", "أهلاً بك",
+        "أهلاً بعودتك", "مساء الورد", "صباح الورد", "مساء الفل", "صباح الفل", "صباح الورد والياسمين",
+        "مساء الورد والياسمين", "كيف الأمور عندك", "كيف الدنيا معك", "أهلاً عزيزي", "مرحبا عزيزي",
+        "تحياتي لك", "أهلاً وسهلاً بك", "أهلاً وسهلاً بك يا", "شو عامل اليوم", "شو مسوي اليوم",
+        "كيف كانت يومك", "كيف كانت ليلتك", "كيف هي أحوالك"
+    ]
     for greeting in english_greetings:
         if greeting.lower() in user_input.lower():
             return True
