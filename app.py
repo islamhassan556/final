@@ -8,6 +8,7 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from googletrans import Translator
+import logging
 
 # Initialize
 app = Flask(__name__)
@@ -16,6 +17,8 @@ CORS(app)
 nltk.download('punkt')
 nltk.download('stopwords')
 nltk.download('wordnet')
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Translation functions
 def translate_to_arabic(text):
@@ -28,7 +31,7 @@ def translate_to_english(text):
     translation = translator.translate(text, src='ar', dest='en')
     return translation.text
 
-# NLP
+# NLP functions
 def lowercase_text(text):
     return text.lower()
 
@@ -68,7 +71,6 @@ tfidf_vectorizer = joblib.load('tfidf_vectorizer.joblib')
 model = joblib.load('best_svm_classifier.joblib')
 
 # Greeting detection function
-# Greeting detection function
 def detect_greeting(user_input):
     english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "introduce yourself", "what is your job", "who are you", "tell me what you offer", "what are your services", "what's up"]
     arabic_greetings = ["مرحبا","مرحبًا","أهلا","أهلًا","مساء الخير","صباح الخير","عرف نفسك","ما هي وظيفتك","من انت؟","من انت","عرفني بنفسك","اخبرني ماذا تقدم","ما هي خدماتك"]
@@ -80,22 +82,23 @@ def detect_greeting(user_input):
             return True
     return False
 
-
 # Greeting response
 def respond_to_greeting(lang):
     if lang == 'ar':
-        return  "مرحبًا! أنا مساعد الرعاية الصحية الخاص بك! يرجى إدخال الأعراض الخاصة بك، وسأبذل قصارى جهدي لإخبارك عن أمراضك والاحتياطات الموصى بها لمساعدتك على حماية نفسك"
+        return "مرحبًا! أنا مساعد الرعاية الصحية الخاص بك! يرجى إدخال الأعراض الخاصة بك، وسأبذل قصارى جهدي لإخبارك عن أمراضك والاحتياطات الموصى بها لمساعدتك على حماية نفسك"
     else:
-        return  "Hello! I'm your healthcare assistant!, Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
+        return "Hello! I'm your healthcare assistant!, Please enter your symptoms, and I'll do my best to tell your diseases and recommended precautions to help you protect yourself"
 
 @app.route('/predict', methods=['POST'])
 def predict():
     # Get input data from request
     text = request.json.get('text')
+    logging.debug(f"Received input: {text}")
 
     # Detect input language
     translator = Translator()
     lang = translator.detect(text).lang
+    logging.debug(f"Detected language: {lang}")
 
     # Check for greetings
     if detect_greeting(text):
@@ -106,17 +109,22 @@ def predict():
         translated_text = translate_to_english(text)
     else:
         translated_text = text
+    logging.debug(f"Translated text: {translated_text}")
 
     # NLP
     preprocessed_text = preprocess_text(translated_text)
+    logging.debug(f"Preprocessed text: {preprocessed_text}")
 
     # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
+    logging.debug(f"Text vectorized: {text_vectorized}")
 
     # Prediction
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
+    logging.debug(f"Predicted disease: {predicted_disease}")
+    logging.debug(f"Prediction score: {score}")
 
     if score > 0.30:
         # Translate predicted disease to the input language
@@ -125,14 +133,13 @@ def predict():
             response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease}
         else:
             response = {'predicted': f"Maybe you suffer from {predicted_disease}"}
-    
         return jsonify(response), 200
     else:
+        logging.debug("Low confidence score, responding with error message")
         if lang == 'ar':
             response = {'error': 'الرجاء إدخال أعراض صحيحة'}
         else:
             response = {'error': 'Please enter valid symptoms'}
-    
         return jsonify(response), 400
 
 if __name__ == '__main__':
