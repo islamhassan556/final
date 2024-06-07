@@ -108,6 +108,7 @@ def predict():
 
     # Check for greetings
     if detect_greeting(translated_text):
+        logging.debug("Detected greeting")
         return jsonify({'predicted': respond_to_greeting(lang)}), 200
 
     # NLP
