@@ -108,15 +108,11 @@ def predict():
 
     # Check for greetings
     if detect_greeting(translated_text):
-        logging.debug("Detected greeting")
         return jsonify({'predicted': respond_to_greeting(lang)}), 200
 
     # NLP
     preprocessed_text = preprocess_text(translated_text)
     logging.debug(f"Preprocessed text: {preprocessed_text}")
-
-    # Print preprocessed text for debugging
-    print("Preprocessed Text:", preprocessed_text)
 
     # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
