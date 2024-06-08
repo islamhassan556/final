@@ -75,10 +75,14 @@ def detect_greeting(user_input):
     english_greetings = ["hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon", "good evening", "introduce yourself", "what is your job", "who are you", "tell me what you offer", "what are your services", "what's up"]
     arabic_greetings = ["مرحبا","مرحبًا","أهلا","أهلًا","مساء الخير","صباح الخير","عرف نفسك","ما هي وظيفتك","من انت؟","من انت","عرفني بنفسك","اخبرني ماذا تقدم","ما هي خدماتك"]
     greetings = english_greetings + arabic_greetings
-    words = set(user_input.lower().split())
-    for greeting in greetings:
-        if any(word in greeting.lower().split() for word in words):
+
+    all_greetings = greetings
+
+    for greeting in all_greetings:
+        if user_input.lower().strip() == greeting.lower():
+            logging.debug(f"Detected greeting: {user_input}")
             return True
+    
     return False
 
 # Greeting response
@@ -90,35 +94,29 @@ def respond_to_greeting(lang):
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Get input data from request
     text = request.json.get('text')
     logging.debug(f"Received input: {text}")
 
-    # Detect input language
     translator = Translator()
     lang = translator.detect(text).lang
     logging.debug(f"Detected language: {lang}")
 
-    # Translate input to English if it's in Arabic
     if lang == 'ar':
         translated_text = translate_to_english(text)
         logging.debug(f"Translated text to English: {translated_text}")
     else:
         translated_text = text
 
-    # Check for greetings
     if detect_greeting(translated_text):
+        logging.debug("Input detected as greeting")
         return jsonify({'predicted': respond_to_greeting(lang)}), 200
 
-    # NLP
     preprocessed_text = preprocess_text(translated_text)
     logging.debug(f"Preprocessed text: {preprocessed_text}")
 
-    # TF-IDF vectorizer
     text_vectorized = tfidf_vectorizer.transform([preprocessed_text]).toarray()
     logging.debug(f"Text vectorized: {text_vectorized}")
 
-    # Prediction
     predicted_disease = model.predict(text_vectorized)[0]
     predicted_proba = model.predict_proba(text_vectorized)[0]
     score = predicted_proba[np.argmax(predicted_proba)]
@@ -126,12 +124,12 @@ def predict():
     logging.debug(f"Prediction score: {score}")
 
     if score > 0.30:
-        # Translate predicted disease to the input language
         if lang == 'ar':
             translated_disease = translate_to_arabic(predicted_disease)
             response = {'predicted': "من المحتمل أنك تعاني من " + translated_disease}
         else:
             response = {'predicted': f"Maybe you suffer from {predicted_disease}"}
+        logging.debug(f"Response: {response}")
         return jsonify(response), 200
     else:
         logging.debug("Low confidence score, responding with error message")
@@ -139,6 +137,7 @@ def predict():
             response = {'error': 'الرجاء إدخال أعراض صحيحة'}
         else:
             response = {'error': 'Please enter valid symptoms'}
+        logging.debug(f"Response: {response}")
         return jsonify(response), 400
 
 if __name__ == '__main__':
