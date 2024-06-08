@@ -89,10 +89,8 @@ def detect_greeting(user_input):
         "how are you doing", "hey, what’s new", "hey, how are things", "how have things been", 
         "how’s it going with you", "how’s everything been", "how’s life treating you", 
         "how’s your day been", "hey, how’s everything", "hello, what’s up", "hi, how’s it going",
-        "g'day", "hey, how’ve you been"
-    ]
-
-     arabic_greetings = [
+        "g'day", "hey, how’ve you been"]
+    arabic_greetings = [
         "مرحبا", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "صباح الخير", "عرف نفسك",
         "ما هي وظيفتك", "من انت؟", "من انت", "عرفني بنفسك", "اخبرني ماذا تقدم",
         "ما هي خدماتك", "كيف حالك", "ما الأخبار", "مرحبتين", "السلام عليكم", "وعليكم السلام",
@@ -104,8 +102,7 @@ def detect_greeting(user_input):
         "أهلاً بعودتك", "مساء الورد", "صباح الورد", "مساء الفل", "صباح الفل", "صباح الورد والياسمين",
         "مساء الورد والياسمين", "كيف الأمور عندك", "كيف الدنيا معك", "أهلاً عزيزي", "مرحبا عزيزي",
         "تحياتي لك", "أهلاً وسهلاً بك", "أهلاً وسهلاً بك يا", "شو عامل اليوم", "شو مسوي اليوم",
-        "كيف كانت يومك", "كيف كانت ليلتك", "كيف هي أحوالك"
-    ]
+        "كيف كانت يومك", "كيف كانت ليلتك", "كيف هي أحوالك"]
     greetings = english_greetings + arabic_greetings
 
     all_greetings = greetings
