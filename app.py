@@ -105,10 +105,10 @@ def detect_greeting(user_input):
         "كيف كانت يومك", "كيف كانت ليلتك", "كيف هي أحوالك"]
     greetings = english_greetings + arabic_greetings
 
-    all_greetings = greetings
+    user_input_cleaned = remove_punctuation(user_input.lower().strip())
 
-    for greeting in all_greetings:
-        if user_input.lower().strip() == greeting.lower():
+    for greeting in greetings:
+        if user_input_cleaned == remove_punctuation(greeting.lower().strip()):
             logging.debug(f"Detected greeting: {user_input}")
             return True
     
