@@ -73,7 +73,7 @@ model = joblib.load('best_svm_classifier.joblib')
 # Greeting detection function
 def detect_greeting(user_input):
     english_greetings = [
-        "hi", "hello", "hey", "howdy", "greetings", "good morning", "good afternoon",
+        "hi", "hello", "Hello,tell me what are your services?", "hey", "howdy", "greetings", "good morning", "good afternoon",
         "good evening", "introduce yourself", "what is your job", "who are you",
         "tell me what you offer", "what are your services", "what's up", "hiya",
         "how are you", "how is it going", "what's new", "what's happening", "salutations",
@@ -84,16 +84,16 @@ def detect_greeting(user_input):
         "what's the good word", "what's the news", "top of the morning to you", 
         "how do you do", "look who it is", "what's crackin'", "what's cooking", 
         "what's shaking", "what's sizzling", "what's happening", "how's everything going",
-        "what's the latest", "what's new", "what's the word", "yo yo", "hey there","Hello,tell me what are your services?", 
-        "hi there","Hello,tell me what are your services","Hello, tell me what are your services","Hello, what are your services", "what's going down", "hey, how's it going", "hello there", 
+        "what's the latest", "what's new", "what's the word", "yo yo", "hey there", 
+        "hi there", "what's going down", "hey, how's it going", "hello there", 
         "how are you doing", "hey, what’s new", "hey, how are things", "how have things been", 
         "how’s it going with you", "how’s everything been", "how’s life treating you", 
         "how’s your day been", "hey, how’s everything", "hello, what’s up", "hi, how’s it going",
         "g'day", "hey, how’ve you been"]
     arabic_greetings = [
-        "مرحباً، أخبرني ما هي خدماتك؟", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "صباح الخير", "عرف نفسك","مرحب" ,
+        "مرحبا", "مرحبًا", "أهلا", "أهلًا", "مساء الخير", "مرحباً، أخبرني ما هي خدماتك؟", "صباح الخير", "عرف نفسك",
         "ما هي وظيفتك", "من انت؟", "من انت", "عرفني بنفسك", "اخبرني ماذا تقدم",
-        "ما هي خدماتك","كيف حالك","ما الأخبار", "مرحبتين", "السلام عليكم", "وعليكم السلام",
+        "ما هي خدماتك", "كيف حالك", "ما الأخبار", "مرحبتين", "السلام عليكم", "وعليكم السلام",
         "تحية", "مساء النور", "صباح النور", "كيف حالك اليوم", "كيف حالك الآن", "أهلاً وسهلاً",
         "مرحبا بك", "يسعد صباحك", "يسعد مساك", "شخبارك", "شلونك", "كيفك", "كيف أصبحت",
         "كيف أمسيت", "كيف الحال", "كيف الأمور", "كيف الدنيا", "شو الأخبار", "كيف الوضع",
@@ -105,10 +105,10 @@ def detect_greeting(user_input):
         "كيف كانت يومك", "كيف كانت ليلتك", "كيف هي أحوالك"]
     greetings = english_greetings + arabic_greetings
 
-    user_input_cleaned = remove_punctuation(user_input.lower().strip())
+    all_greetings = greetings
 
-    for greeting in greetings:
-        if user_input_cleaned == remove_punctuation(greeting.lower().strip()):
+    for greeting in all_greetings:
+        if user_input.lower().strip() == greeting.lower():
             logging.debug(f"Detected greeting: {user_input}")
             return True
     
